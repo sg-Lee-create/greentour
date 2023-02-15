@@ -4,6 +4,7 @@
 <%
 request.setCharacterEncoding("utf-8");
 PackageInfo pi = (PackageInfo)request.getAttribute("pi");
+ArrayList<PackageTour> tl = pi.getTourList();
 
 String picode = pi.getPi_code();
 %>
@@ -14,24 +15,25 @@ String picode = pi.getPi_code();
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
 
 <script>
-
-
 $(window).scroll(function(){
 	var scrollTop = $(document).scrollTop();
-	if (scrollTop < 810) {
+	var scrollRe = 570;
+	if (scrollTop < 807) {
 		scrollTop = 0;
+		$(".sec_statement").stop();
+		$(".sec_statement").animate( { "top" : scrollTop},1500);
+	} else if (scrollTop > 807) {
+		$(".sec_statement").stop();
+		$(".sec_statement").animate( { "top" : scrollTop - scrollRe},1500);
 	}
-	$(".sec_statement").stop();
-	$(".sec_statement").animate( { "top" : scrollTop},1500);
 });
 
-
-function aa(bb) {
+function people(option) {
 	var total = Number($("#opPay").val());
 	var adultHap = 0;
 	var childHap = 0;
 	
-	if(bb == 1) { // 성인
+	if(option == 1) { // 성인
 		adultHap = $("#piAdult").val() * $("#sel_01").val();
 		$("#adultCurr").html(adultHap);
 	} else { // 아동
@@ -42,6 +44,7 @@ function aa(bb) {
 	total += adultHap + childHap;
 	$("#opPay").val(total);
 	$("#totalNum").html(total);
+	
 }
 
 $( document ).ready( function() {
@@ -55,16 +58,16 @@ $( document ).ready( function() {
 });
 
 $( document ).ready( function() {
-$('.tab-link').click(function () {
-    var tab_id = $(this).attr('data-tab');
-
-    $('.tab-link').removeClass('current');
-    $('.tab-content').removeClass('current');
-
-    $(this).addClass('current');
-    $("#" + tab_id).addClass('current');
-
-});
+	$('.tab-link').click(function () {
+	    var tab_id = $(this).attr('data-tab');
+	
+	    $('.tab-link').removeClass('current');
+	    $('.tab-content').removeClass('current');
+	
+	    $(this).addClass('current');
+	    $("#" + tab_id).addClass('current');
+	
+	});
 });
 </script>
 <style>
@@ -300,12 +303,11 @@ position: relative;
 
 .tabs_menu_wrap {
 	height: 55px;
-    margin: 0 0 40px;
 }
 
 .tabs_menu > li {
 float: left;
-width: 20%;
+width: 25%;
 }
 
 .tabs_menu li a.current {
@@ -438,11 +440,21 @@ width: 20%;
     border: 1px solid #e2e2e2;
 }
 
-.cscenter {
+.cs_center {
 	position: relative;
     height: 205px;
     border: 1px solid #e2e2e2;
     overflow: hidden;
+}
+
+.cs_center::before {
+	position: absolute;
+    left: 380px;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    content: '';
+    background: #e2e2e2;
 }
 .cs_title {
 	position: absolute;
@@ -480,6 +492,19 @@ width: 20%;
     border: 1px solid #ccc;
     border: 1px solid #ccc;
     border-radius: 3px;
+    text-decoration-line: none;
+}
+
+.csbtn > a::after {
+	position: absolute;
+    right: 21px;
+    top: 6%;
+    display: block;
+    width: 5px;
+    height: 9px;
+    margin-top: -4px;
+    content: '>';
+    font-size: 22px;
 }
 .hour {
     float: left;
@@ -512,6 +537,10 @@ width: 20%;
     margin: 0 0 8px;
 }
 
+#list tr { height: 30px; }
+#list th, #list td { padding: 8px 3px; }
+#list th { border: solid black 1px; }
+#list td { border: solid black 1px; font-size:0.8em;}
 
 </style>
 <div class="maincontainer">
@@ -573,7 +602,7 @@ width: 20%;
 					<tr>
 						<th>항공편</th>
 						<td colspan="2"><span class="txt_wrap">
-						<img src="" class="ico_air" alt="아시아나 항공"> 아시아나 항공</span></td>
+						<img src="" class="ico_air" alt="아시아나 항공"> 아시아나 항공 </span></td>
 					</tr>
 					<tr>
 						<th>방문도시</th>
@@ -604,29 +633,26 @@ width: 20%;
 				</colgroup>
 				<tbody>
 					<tr>
-						<th>스페셜 혜택</th>
-						<td colspan="2"><span class="txt_wrap"><%=pi.getPi_period() %>
-								<ul class="txt_sum">
-									<li>인천 03월 18일 (토) 10:00 OZ152 출발 - 센다이 03월 18일 (토) 12:30 도착</li>
-									<li>센다이 03월 21일 (화) 13:30 OZ151 출발 - 인천 03월 21일 (화) 16:00 도착</li>
-								</ul>
-						</span></td>
-					</tr>
-					<tr>
 						<th>관광</th>
-						<td colspan="2"><span class="txt_wrap">
-						<img src="" class="ico_air" alt="아시아나 항공"> 아시아나 항공</span></td>
+						<td colspan="2">
+						<%			
+						for (int i = 0; i < tl.size(); i++) {
+						PackageTour pt = tl.get(i);
+						%>
+						<span class="txt_wrap">●&nbsp;<%=pt.getPt_name() %></span><br/>
+						<% } %>
+						</td>
 					</tr>
 					<tr>
 						<th>보험</th>
-						<td colspan="2"><span class="txt_wrap"> 센다이 </span></td>
+						<td colspan="2"><span class="txt_wrap"><%=pi.getPn_insur() %> </span></td>
 						<td></td>
 					</tr>
 					<tr>
-						<th>인솔자/가이드</th>
+						<th>가이드</th>
 						<td colspan="2">
 							<div class="personal_wrap">
-								<div class="seats"><%=pi.getPi_sale() %>/<%=pi.getPi_stock() %></div>
+								<div class="seats"><%=pi.getPn_guide() %></div>
 							</div>
 						</td>
 					</tr>
@@ -639,13 +665,13 @@ width: 20%;
 		<h4 class="title">포함사항</h4>
 		<ul class="include_content">
 			<li>
-				<p>○ 최대 1억원 해외여행자보험<br>○ 인천(김포)공항세,현지공항세,관광진흥개발기금<br>○ 유류할증료<br></p>
+				<p><%=pi.getPn_include() %></p>
 			</li>
 		</ul>
 		<h4 class="title">불포함사항</h4>
 		<ul class="include_content">
 			<li>
-				<p>○ 최대 1억원 해외여행자보험<br>○ 인천(김포)공항세,현지공항세,관광진흥개발기금<br>○ 유류할증료<br></p>
+				<p><%=pi.getPn_declude() %></p>
 			</li>
 		</ul>
 	</div>
@@ -653,25 +679,7 @@ width: 20%;
 	<div class="caution">
 	<h3 class="title">예약시 유의사항</h3>
 		<p>
-	    ■ 선발권 관련 규정안내<br>
-	    ① 선발권 특가로 진행되는 요금입니다.<br>
-	    ② 선발권 후 항공요금 상승에 따라 상품가격이 인상될 수 있습니다.<br>
-	    ③ 항공사 규정상 발권 후에는 이름 변경, 여정 변경 시 별도비용이 추가됩니다.<br><br />
-				
-		- 해당 상품은 같은 일정의 상품들과 항공좌석을 공유하므로 타코드 선모객시 조기마감될 수 있습니다.<br>
-		- 여권 상의 영문과 예약 시의 영문이 다를 경우 항공 좌석이 취소될 수 있으며 이에 따른 취소료 또는 추가 차액이 발생할 수 있으니 반드시 예약처에 재확인 하시기 바랍니다.<br>
-		- 기내서비스는 최소 출발 3일전 신청해주세요.<br>
-		
-		- 상품가격은 성인 2인 1실 사용 시 1인 기준입니다.<br />
-		
-		- 아동 No Bed 요금은 성인2인과 같은 방을 사용하며, 엑스트라베드가 제공되지 않는 요금입니다.<br><br>
-		1. 여권 : 유효기간 6개월이상 필수
-		<br />2. 자유여행 및 일정불참여 원하시는 분들은 예약불가
-		<br />3. 임산부 : '여행에 무리없음' 문구포함된 의사영문 소견서 지참필요
-		<br />4. 외국국적자 : 예약불가
-		<br />5. 이중국적자 : 도착지국가 출입국정책 적용(해당국 대사관 직접 문의필요)
-		<br />6. 공항미팅(패키지)) : 공항내 한국인가이드 출입불가로 현지인가이드가 수속가능성 있음
-		<br />7. 단체견적 문의는 별도요청 필요
+		<%=pi.getPn_warning() %>
 		</p>
 	</div>
 	<!-- 탭 -->
@@ -680,29 +688,87 @@ width: 20%;
 			<ul class="tabs_menu">
 				<li><a class="tab-link current" data-tab="tab-1">일정표</a></li>
 				<li><a class="tab-link"  data-tab="tab-2">호텔정보</a></li>
-				<li><a class="tab-link"  data-tab="tab-3">관광정보</a></li>
-				<li><a class="tab-link"  data-tab="tab-4">여행약관 &amp; 참고사항</a></li>
-				<li><a class="tab-link"  data-tab="tab-5">여행안전정보</a></li>
+				<li><a class="tab-link"  data-tab="tab-3">여행약관 &amp; 참고사항</a></li>
+				<li><a class="tab-link"  data-tab="tab-4">여행안전정보</a></li>
 			</ul>
 		</div>
 		<div id="tab-1" class="tab-content current">
-			content1
+			<div id="detail">
+				<p align="center" style="font-size:1.5em;">1일차</p><br />
+				<ul style="display:flex; justify-content:space-between; font-size:1.1em; border:1px solid black;" align="center">
+					<li style="width:150px; text-align:left;">인천 출발</li>
+					<li style="width:150px; text-align:center;">-----------></li>
+					<li style="width:150px; text-align:right;"><%=pi.getCc_name() %> 도착</li>
+				</ul>
+				<div style="border:1px solid black; border-top:none;">
+				● 인천 국제공항 출발<br />
+				● <%=pi.getCc_name() %> 도착<br />
+				</div>
+				<p style="border:1px solid black; border-top:none;">숙소 : <%=pi.getHi_name() %> </p>
+				<p style="border:1px solid black; border-top:none;">석식 : <%=pi.getPi_food() %> </p>
+				<p style="border:1px solid black; border-top:none;">스폐셜 혜택 : <%=pi.getPn_guide() %> </p>
+			</div><br /><br />
+			<%
+			System.out.println(pi.getPi_period().substring(3, 4));
+			int period = Integer.parseInt(pi.getPi_period().substring(3, 4));
+			for (int i = 0; i < tl.size(); i++) {
+				PackageTour pt = tl.get(i);
+			%>
+			<div id="detail">
+			<p align="center" style="font-size:1.5em;"><%=i+2 %>일차</p><br />
+				<div style="border:1px solid black;">
+				● <%=pt.getPt_name() %><hr />
+				★ <%=pt.getPt_summary()%><hr />
+				★ <%=pt.getPt_desc() %>
+			</div><br /><br />
+			</div>
+			<% } %>
+			<div id="detail">
+				<p align="center" style="font-size:1.5em;"><%=period %>일차</p><br />
+				<ul style="display:flex; justify-content:space-between; font-size:1.1em; border:1px solid black;" align="center">
+					<li style="width:150px; text-align:left;"><%=pi.getCc_name() %> 출발</li>
+					<li style="width:150px; text-align:center;">-----------></li>
+					<li style="width:150px; text-align:right;">인천 도착</li>
+				</ul>
+				<div style="border:1px solid black; border-top:none;">
+				● <%=pi.getCc_name() %> 출발<br />
+				● 인천 국제공항 도착<br />
+				</div>
+			</div>
 		</div>
 		<div id="tab-2" class="tab-content">
-			content2
+			<table width="877" cellpadding="0" cellspacing="0" id="list">
+				<tr>
+					<th>일차</th>
+					<th>도시</th>
+					<th>호텔</th>
+				</tr>
+				<%
+				for (int i = 1; i < period; i++) {
+					out.println("<tr align='center'>");
+					out.println("<td>" + i + "일차</td>");
+					out.println("<td>" + pi.getCc_name() + "</td>");
+					out.println("<td>" + pi.getHi_name() + "일차</td>");
+					out.println("</tr>");
+				}
+				%>
+			</table>
 		</div>
 		<div id="tab-3" class="tab-content">
-			content3
+			<div style="border:1px solid black">
+				보험 : <%=pi.getPn_insur() %><br />
+				포함사항 : <%=pi.getPn_include() %><br />
+				불포함사항 : <%=pi.getPn_declude() %>
+			</div>
 		</div>
 		<div id="tab-4" class="tab-content">
-			content4
-		</div>
-		<div id="tab-5" class="tab-content">
-			content5
+			<div style="border:1px solid black">
+				<%=pi.getPn_safe() %>
+			</div>
 		</div>
 	</div>
 	<!-- 예약센터 -->
-	<div class="cscenter">
+	<div class="cs_center">
 		<h3 class="cs_title">그린투어 여행 예약센터</h3>
 		<div class="inquiry">
 			<span class="cscall">1234-1234</span>
@@ -745,7 +811,7 @@ width: 20%;
 				<input type="hidden" id="piChild" value="<%=pi.getPi_child() %>"/>
 				<ul class="fare ">
 					<li><label for="sel_01" class="tit">성인</label> <select
-						name="sel_01" id="sel_01" class="select pricesel" onchange="aa(1)">
+						name="sel_01" id="sel_01" class="select pricesel" onchange="people(1)">
 							<option value="1">1</option>
 							<option value="2">2</option>
 							<option value="3">3</option>
@@ -758,7 +824,7 @@ width: 20%;
 							<option value="10">10</option>
 					</select> <span class="price"><span class="curr" id="adultCurr"><%=pi.getPi_adult() %></span></span></li>
 					<li><label for="sel_02" class="tit">아동</label> <select
-						name="sel_01" id="sel_02" class="select pricesel" onchange="aa(2)">
+						name="sel_01" id="sel_02" class="select pricesel" onchange="people(2)">
 							<option value="0">0</option>
 							<option value="1">1</option>
 							<option value="2">2</option>

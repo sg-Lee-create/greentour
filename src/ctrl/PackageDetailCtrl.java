@@ -1,6 +1,8 @@
 package ctrl;
 
 import java.io.*;
+import java.util.ArrayList;
+
 import javax.servlet.*;
 import javax.servlet.annotation.*;
 import javax.servlet.http.*;
@@ -21,20 +23,22 @@ public class PackageDetailCtrl extends HttpServlet {
 		PackageDetailSvc packageDetailSvc = new PackageDetailSvc();
 		PackageInfo pi = packageDetailSvc.getDetailInfo(picode);
 		
-		if (pi == null) {
-			response.setContentType("text/html; charset=utf-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('잘못된 경로로 들어오셨습니다.);");
-			out.println("history.back();");
-			out.println("</script>");
-			out.close();
-		} else {		// 보여줄 게시글이 있으면
+		
+		//if (pi == null) {
+//			response.setContentType("text/html; charset=utf-8");
+//			PrintWriter out = response.getWriter();
+//			out.println("<script>");
+//			out.println("alert('잘못된 경로로 들어오셨습니다.);");
+//			out.println("history.back();");
+//			out.println("</script>");
+//			out.close();
+		//} else {		// 보여줄 게시글이 있으면
 			request.setAttribute("pi", pi);
+			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("front/package/package_detail.jsp");
 			dispatcher.forward(request, response);
 		
-		}	
+		//}	
 	}
 }
 

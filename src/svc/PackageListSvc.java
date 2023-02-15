@@ -10,7 +10,19 @@ import dao.*;
 import vo.*;
 
 public class PackageListSvc {
-	public JsonArray getPackageListCount(String ccid) {
+	public ArrayList<PackageDate> getPackageListCount(String picode) {
+		ArrayList<PackageDate> pdList = new ArrayList<PackageDate>();
+		Connection conn = getConnection();
+		PackageProcDao packageProcDao = PackageProcDao.getInstance();
+		packageProcDao.setConnection(conn);
+		
+		pdList = packageProcDao.getPackageListCount(picode);
+		close(conn);
+		
+		return pdList;
+	}
+
+	public JsonArray getPackageDateList(String picode, String fiDeparture) {
 		
 		JsonArray packageList = new JsonArray();
 		
@@ -18,7 +30,7 @@ public class PackageListSvc {
 		PackageProcDao packgeProcDao = PackageProcDao.getInstance();
 		packgeProcDao.setConnection(conn);
 		
-		packageList = packgeProcDao.getPackageListCount(ccid);
+		packageList = packgeProcDao.getPackageDateList(picode, fiDeparture);
 		close(conn);
 		
 		return packageList;

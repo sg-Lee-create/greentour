@@ -18,22 +18,23 @@ function city(chkRs) {
 	var data = new Object();
 	data.ccid = chkRs;
 	$.ajax({
-		type : "POST", 
-		url : "/greenTourSite/package_list", 
+		type : "POST",
+		url : "/greenTourSite/package_main", 
 		data : data,
-		success : function(packageList) {
+		success : function(packageMain) {
+			console.log(packageMain);
 			$("#"+chkRs).addClass("active"); // 현재 클릭한곳에 active값 추가
-			for (var i = 0; i < packageList.length; i++) {
-				var ccId = packageList[i].cc_id;
-				var pIcode = packageList[i].pi_code;
-				var pIname = packageList[i].pi_name;
-				var pIimg1 = packageList[i].pi_img1;	
-				var pIadult = packageList[i].pi_adult;	
-				
-				$('.city' + i).find('img').attr("src", packageList[i].pi_img1);
-				$('.city' + i).find('a').attr("href", "package_detail?picode=" + packageList[i].pi_code);
-				$('.city' + i).find('.info').find('.name').text(packageList[i].pi_name);
-				$('.city' + i).find('.info').find('.price').find('strong').text(packageList[i].pi_adult);
+			for (var i = 0; i < packageMain.length; i++) {
+				var ccId = packageMain[i].cc_id;
+				var pIcode = packageMain[i].pi_code;
+				var pIname = packageMain[i].pi_name;
+				var pIimg1 = packageMain[i].pi_img1;	
+				var pIadult = packageMain[i].pi_adult;	
+				console.log(packageMain[i]);
+				$('.city' + i).find('img').attr("src", packageMain[i].pi_img1);
+				$('.city' + i).find('a').attr("href", "package_list?picode=" + packageMain[i].pi_code);
+				$('.city' + i).find('.info').find('.name').text(packageMain[i].pi_name);
+				$('.city' + i).find('.info').find('.price').find('strong').text(packageMain[i].pi_adult);
 			}
 		}
 	});

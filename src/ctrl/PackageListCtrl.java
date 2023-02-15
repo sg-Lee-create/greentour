@@ -1,14 +1,20 @@
 package ctrl;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import javax.servlet.*;
-import javax.servlet.annotation.*;
-import javax.servlet.http.*;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import svc.*;
-import vo.*;
+
+import svc.PackageListSvc;
+import vo.PackageDate;
 
 @WebServlet("/package_list")
 public class PackageListCtrl extends HttpServlet {
@@ -17,22 +23,38 @@ public class PackageListCtrl extends HttpServlet {
         super();
 
     }
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		
+		String picode = request.getParameter("picode");
+		System.out.println(picode);
 		
-		String ccid = request.getParameter("ccid");
-		System.out.println("ccid : " + ccid);
-
 		PackageListSvc packageListSvc = new PackageListSvc();
+		ArrayList<PackageDate> pdList = packageListSvc.getPackageListCount(picode);
+		System.out.println(pdList.size());
+		request.setAttribute("pdList", pdList);
 		
-		JsonArray packageList = packageListSvc.getPackageListCount(ccid);
-		System.out.println("packageList : " + packageList);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("front/package/package_list.jsp");
+		dispatcher.forward(request, response);
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
 		
+		String picode = request.getParameter("picode");
+		String fiDeparture = request.getParameter("fiDeparture");
+		System.out.println("picode : "+picode+" / fiDeparture : "+fiDeparture);
+		
+		PackageListSvc packageListSvc = new PackageListSvc();
+
+		JsonArray packageList = packageListSvc.getPackageDateList(picode, fiDeparture);
+
 		response.setContentType("application/json; charset=UTF-8;");
 		PrintWriter out = response.getWriter();
-		out.println(packageList);		// 장바구니 담기 기능을 호출했던 ajax를 사용한 곳으로 결과값을 리턴
+		out.println(packageList); // 장바구니 담기 기능을 호출했던 ajax를 사용한 곳으로 결과값을 리턴
 	}
-
+	
 }
